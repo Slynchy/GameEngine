@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <engine/Mesh.h>
 #include <engine/Graphics.h>
+#include <engine/Scene.h>
 #include <engine/Camera.h>
 
 namespace GameEngine {
@@ -15,7 +16,8 @@ namespace GameEngine {
 		private:
 			Graphics* m_graphics;
 
-			GameEngine::Camera* camera;
+			GameEngine::Camera* active_camera;
+			GameEngine::Scene* active_scene;
 
 			std::vector<std::shared_ptr<Entity>> m_sceneGraph;
 
@@ -23,12 +25,13 @@ namespace GameEngine {
 		public:
 			SceneManager(Graphics* _graphicsPtr) {
 				m_graphics = _graphicsPtr;
-				camera = new GameEngine::Camera();
-				this->AddToScene(camera);
+				active_scene = new GameEngine::Scene();
+				active_camera = active_scene->getCamera();
+				//this->AddToScene(camera);
 			}
 
 			GameEngine::Camera* getCamera() {
-				return this->camera;
+				return this->active_camera;
 			}
 
 			unsigned int AddToScene(Entity* _ent) {
@@ -37,8 +40,8 @@ namespace GameEngine {
 			}
 
 			void Update() {
-				auto projection = this->camera->projectionMatrix;
-				auto view = this->camera->viewMatrix;
+				auto projection = this->active_camera->projectionMatrix;
+				auto view = this->active_camera->viewMatrix;
 
 				for (std::shared_ptr<Entity> ent : m_sceneGraph) {
 					ent->Update(projection, view);

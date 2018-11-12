@@ -1,5 +1,10 @@
 #pragma once
 
+/* 
+	This class was taken from my last engine which was used when submitting my AI Programming assignment
+	in second year. As this wasn't the main focus of the assignment, it should be fine to use here...
+*/
+
 #include <SDL2/SDL.h>
 #include <engine/Events.h>
 #include <engine/EventObject.h>
