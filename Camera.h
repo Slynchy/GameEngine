@@ -20,6 +20,14 @@ namespace GameEngine {
 			float yaw = 0.0f;
 			float roll = 0.0f;
 
+			void lookAt(Entity* target) {
+				this->viewMatrix = glm::lookAt(
+					this->transform->getPosition(), 
+					target->GetComponent<Transform>()->getPosition(), 
+					glm::vec3(0, 1.0f, 0)
+				);
+			}
+
 			Camera()
 			{
 				this->transform = new GameEngine::Transform();

@@ -175,7 +175,7 @@ namespace GameEngine {
 			}
 
 			// Return a mesh object created from the extracted mesh data
-			return Mesh(vertices, indices, textures);
+			return Mesh(vertices, indices);
 		}
 
 		// Checks all material textures of a given type and loads the textures if they're not loaded yet.

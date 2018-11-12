@@ -14,15 +14,17 @@
 #include <engine/Mesh.h>
 #include <engine/SceneManager.h>
 #include <engine/InputManager.h>
+#include <engine/ResourceManager.h>
 
 namespace GameEngine {
 
 	class Engine {
 		private:
-			GameEngine::Graphics* m_graphics;
-			GameEngine::Events* m_events;
-			GameEngine::SceneManager* m_sceneManager;
-			GameEngine::InputManager* m_inputManager;
+			GameEngine::Graphics*			m_graphics;
+			GameEngine::Events*				m_events;
+			GameEngine::SceneManager*		m_sceneManager;
+			GameEngine::InputManager*		m_inputManager;
+			GameEngine::ResourceManager*	m_resourceManager;
 
 		protected:
 		public:
@@ -34,6 +36,10 @@ namespace GameEngine {
 				SDL_FAILED_TO_INIT = -1
 			};
 
+			GameEngine::ResourceManager* GetResourceManager() {
+				return this->m_resourceManager;
+			}
+
 			int Init() {
 				if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 				{
@@ -43,6 +49,8 @@ namespace GameEngine {
 				m_events = new GameEngine::Events();
 
 				m_inputManager = new GameEngine::InputManager();
+
+				m_resourceManager = new GameEngine::ResourceManager();
 
 				m_graphics = new GameEngine::Graphics();
 				int graphicsErrorCode;
