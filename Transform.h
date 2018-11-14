@@ -17,7 +17,7 @@ namespace GameEngine {
 		public:
 			Transform(glm::vec3 _pos = glm::vec3(0, 0, 0)) {
 				m_position = _pos;
-				m_angles = glm::vec3(1, 1, 1);
+				m_angles = glm::vec3(0, 0, 0);
 				m_scale = glm::vec3(1, 1, 1);
 			}
 
@@ -26,7 +26,10 @@ namespace GameEngine {
 			}
 
 			glm::mat4 getRotationMatrix() {
-				return glm::rotate(0.0f, this->m_angles);
+				auto one = glm::rotate(m_angles.x, glm::vec3(1, 0, 0));
+				auto two = glm::rotate(m_angles.y, glm::vec3(0, 1, 0));
+				auto three = glm::rotate(m_angles.z, glm::vec3(0, 0, 1));
+				return (one + two + three);
 			}
 
 			glm::mat4 getScaleMatrix() {
@@ -39,6 +42,10 @@ namespace GameEngine {
 
 			glm::vec3 getPosition() {
 				return this->m_position;
+			}
+
+			glm::vec3* getPositionPtr() {
+				return &this->m_position;
 			}
 
 			float x() {
@@ -69,9 +76,9 @@ namespace GameEngine {
 				return m_position;
 			}
 
-			void Rotate(glm::ivec2 Amount, float Delta, float Speed = .08f)
+			void Rotate(glm::vec3 amount, float delta, float speed = 10.0f)
 			{
-				//m_angles += glm::vec2(-Amount.x, -Amount.y) * Speed * Delta;
+				m_angles += (amount * speed * delta);
 			}
 
 			void Calculate()

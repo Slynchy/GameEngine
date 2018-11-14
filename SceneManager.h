@@ -39,12 +39,13 @@ namespace GameEngine {
 				return m_sceneGraph.size();
 			}
 
-			void Update() {
+			void Update(float delta) {
+				this->active_camera->UpdateViewMatrix();
 				auto projection = this->active_camera->projectionMatrix;
 				auto view = this->active_camera->viewMatrix;
 
 				for (std::shared_ptr<Entity> ent : m_sceneGraph) {
-					ent->Update(projection, view);
+					ent->Update(delta, projection, view);
 				}
 			}
 

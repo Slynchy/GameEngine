@@ -10,28 +10,38 @@ namespace GameEngine {
 	class Camera : public Entity {
 		private:
 			Transform* transform;
+
+			glm::vec3* lookAtTarget = nullptr;
+
 		protected:
 		public:
 			glm::mat4 projectionMatrix;
 			glm::mat4 viewMatrix; 
 			glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
 			glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
 			float pitch = 0.0f;
 			float yaw = 0.0f;
 			float roll = 0.0f;
 
-			void lookAt(Entity* target) {
-				this->viewMatrix = glm::lookAt(
-					this->transform->getPosition(), 
-					target->GetComponent<Transform>()->getPosition(), 
-					glm::vec3(0, 1.0f, 0)
-				);
+			void lockToTarget(Entity* target) {
+				this->lookAtTarget = target->GetComponent<Transform>()->getPositionPtr();
+				this->UpdateViewMatrix();
+			}
+
+			void clearLockToTarget() {
+				this->lookAtTarget = nullptr;
+			}
+
+			void setPosition(glm::vec3 _pos) {
+				this->transform->setPosition(_pos);
+				this->UpdateViewMatrix();
 			}
 
 			Camera()
 			{
-				this->transform = new GameEngine::Transform();
-				this->transform->setPosition(glm::vec3(4, 3, 3));
+				this->transform = this->GetComponent<Transform>();
+				//this->transform->setPosition(glm::vec3(0, 3, 3));
 
 				this->projectionMatrix = glm::perspective(45.0f, (float)1280 / (float)720, 0.1f, 100.0f);
 
@@ -90,11 +100,26 @@ namespace GameEngine {
 			}
 
 			void UpdateViewMatrix() {
-				this->viewMatrix = glm::lookAt(
-					this->transform->getPosition(), // Camera is at (4,3,3), in World Space
-					this->transform->getPosition() + this->front, // and looks at the origin
-					this->up  // Head is up (set to 0,-1,0 to look upside-down)
-				);
+
+				if (this->lookAtTarget == nullptr) {
+					this->viewMatrix = glm::lookAt(
+						this->transform->getPosition(),
+						(this->transform->getPosition() + this->front),
+						this->up
+					);
+				}
+				else {
+					this->viewMatrix = glm::lookAt(
+						this->transform->getPosition(),
+						*this->lookAtTarget,
+						this->up
+					);
+				}
+
+				/*this->viewMatrix =
+					glm::translate(this->transform->getPosition()) *
+					glm::rotate(1.0f, glm::vec3(pitch, yaw, roll)) *
+					glm::scale(glm::vec3(1.0f));*/
 			}
 	};
 

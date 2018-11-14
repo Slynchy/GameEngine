@@ -70,12 +70,12 @@ namespace GameEngine {
 				return 0;
 			}
 
-			void Update() {
+			void Update(float delta) {
 				m_events->Update();
 				//m_inputManager->Update();
 				m_graphics->PreRender();
 
-				m_sceneManager->Update();
+				m_sceneManager->Update(delta);
 				//m_graphics->SetMatrix(&(*testEntity), dynamic_cast<Mesh*>(testEntity->GetComponent("Mesh").get())->GetModel());
 				//testEntity->Update();
 

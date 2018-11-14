@@ -36,8 +36,8 @@ namespace GameEngine {
 					"My Game",
 					SDL_WINDOWPOS_CENTERED,
 					SDL_WINDOWPOS_CENTERED,
-					1280,
-					720,
+					640,
+					480,
 					SDL_WINDOW_OPENGL
 				);
 

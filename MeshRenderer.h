@@ -92,93 +92,9 @@ namespace GameEngine {
 	class MeshRenderer : public GameEngine::Component
 	{
 	private:
-			GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path) {
 
-				// Create the shaders
-				GLuint vShaderID = glCreateShader(GL_VERTEX_SHADER);
-				GLuint fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+			void Init() {
 
-				// Read the Vertex Shader code from the file
-				std::string vShaderCode;
-				std::ifstream vShaderIStream(vertex_file_path, std::ios::in);
-				if (vShaderIStream.is_open()) {
-					std::stringstream sstream;
-					sstream << vShaderIStream.rdbuf();
-					vShaderCode = sstream.str();
-					vShaderIStream.close();
-				}
-				else {
-					printf("Failed to open %s!!\n", vertex_file_path);
-					getchar();
-					return 0;
-				}
-
-				// Read the Fragment Shader code from the file
-				std::string fShaderCode;
-				std::ifstream fShaderIStream(fragment_file_path, std::ios::in);
-				if (fShaderIStream.is_open()) {
-					std::stringstream sstr;
-					sstr << fShaderIStream.rdbuf();
-					fShaderCode = sstr.str();
-					fShaderIStream.close();
-				}
-
-				GLint res = GL_FALSE;
-				GLint logLen;
-
-				printf("Compiling shader %s...\n", vertex_file_path);
-				char const *vPointer = vShaderCode.c_str();
-				glShaderSource(vShaderID, 1, &vPointer, NULL);
-				glCompileShader(vShaderID);
-
-				// Check Vertex Shader
-				glGetShaderiv(vShaderID, GL_COMPILE_STATUS, &res);
-				glGetShaderiv(vShaderID, GL_INFO_LOG_LENGTH, &logLen);
-				if (logLen > 0) {
-					std::vector<char> vShaderError(logLen + 1);
-					glGetShaderInfoLog(vShaderID, logLen, NULL, &vShaderError[0]);
-					printf("%s\n", &vShaderError[0]);
-				}
-
-				// Compile Fragment Shader
-				printf("Compiling shader %s...\n", fragment_file_path);
-				char const * fPointer = fShaderCode.c_str();
-				glShaderSource(fShaderID, 1, &fPointer, NULL);
-				glCompileShader(fShaderID);
-
-				// Check Fragment Shader
-				glGetShaderiv(fShaderID, GL_COMPILE_STATUS, &res);
-				glGetShaderiv(fShaderID, GL_INFO_LOG_LENGTH, &logLen);
-				if (logLen > 0) {
-					std::vector<char> fShaderError(logLen + 1);
-					glGetShaderInfoLog(fShaderID, logLen, NULL, &fShaderError[0]);
-					printf("%s\n", &fShaderError[0]);
-				}
-
-				// Link the program
-				printf("Linking shader program...\n");
-				GLuint PID = glCreateProgram();
-				glAttachShader(PID, vShaderID);
-				glAttachShader(PID, fShaderID);
-				glLinkProgram(PID);
-
-				// Check the program
-				glGetProgramiv(PID, GL_LINK_STATUS, &res);
-				glGetProgramiv(PID, GL_INFO_LOG_LENGTH, &logLen);
-				if (logLen > 0) {
-					std::vector<char> ProgramErrorMessage(logLen + 1);
-					glGetProgramInfoLog(PID, logLen, NULL, &ProgramErrorMessage[0]);
-					printf("%s\n", &ProgramErrorMessage[0]);
-				}
-
-				glDetachShader(PID, vShaderID);
-				glDetachShader(PID, fShaderID);
-
-				glDeleteShader(vShaderID);
-				glDeleteShader(fShaderID);
-
-				printf("Finished compiling shader program\n");
-				return PID;
 			}
 
 		public:
@@ -194,14 +110,14 @@ namespace GameEngine {
 			glm::mat4 modelMat; 
 			GLuint matID;
 
-			MeshRenderer(std::string vShaderPath = "shaders/vert.glsl", std::string fShaderPath = "shaders/frag.glsl", GLuint texID = 0) {
+			MeshRenderer(GLuint shaderID, GLuint texID = 0) {
 				this->textureID = texID;
 				this->modelMat = glm::mat4(1.0f);
 
 				glGenVertexArrays(1, &this->vertArrayID);
 				glBindVertexArray(this->vertArrayID);
 
-				this->shaderID = this->LoadShaders(vShaderPath.c_str(), fShaderPath.c_str());
+				this->shaderID = shaderID;
 				this->matID = glGetUniformLocation(this->shaderID, "MVP");
 				textureUniID = glGetUniformLocation(this->shaderID, "myTextureSampler");
 
@@ -219,9 +135,9 @@ namespace GameEngine {
 				//glBindVertexArray(0);
 			}
 
-			void Update(glm::mat4 projection, glm::mat4 view) {
+			void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
 				auto test = this->GetParent()->GetComponent<Transform>();
-				auto trans = test->getTranslationMatrix();
+				auto trans = test->getTranslationMatrix() + glm::translate(offset);
 				auto rot = test->getRotationMatrix();
 				auto scale = test->getScaleMatrix();
 				glm::mat4 mvp = projection * view * (trans * rot * scale);

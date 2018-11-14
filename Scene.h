@@ -17,6 +17,13 @@ namespace GameEngine {
 			camera = new GameEngine::Camera();
 		};
 
+		void ClearScene() {
+			for (Entity* ent : m_sceneGraph) {
+				delete ent;
+			}
+			m_sceneGraph.clear();
+		}
+
 		Camera* getCamera() {
 			return this->camera;
 		}
