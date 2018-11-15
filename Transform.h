@@ -26,10 +26,22 @@ namespace GameEngine {
 			}
 
 			glm::mat4 getRotationMatrix() {
-				auto one = glm::rotate(m_angles.x, glm::vec3(1, 0, 0));
-				auto two = glm::rotate(m_angles.y, glm::vec3(0, 1, 0));
-				auto three = glm::rotate(m_angles.z, glm::vec3(0, 0, 1));
-				return (one + two + three);
+				auto one = glm::rotate(
+					glm::mat4(1.0f), 
+					glm::radians(m_angles.x), 
+					glm::vec3(1, 0, 0)
+				);
+				auto two = glm::rotate(
+					one,
+					glm::radians(m_angles.y),
+					glm::vec3(0, 1, 0)
+				);
+				auto three = glm::rotate(
+					two,
+					glm::radians(m_angles.z), 
+					glm::vec3(0, 0, 1)
+				);
+				return (three);
 			}
 
 			glm::mat4 getScaleMatrix() {

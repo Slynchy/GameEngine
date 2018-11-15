@@ -83,6 +83,9 @@ namespace GameEngine {
 			}
 
 			~Entity() {
+				for (std::pair<std::type_index, void*> comp : m_components) {
+					delete comp.second;
+				}
 				m_components.clear();
 			}
 	};

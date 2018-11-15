@@ -1,157 +1,22 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <engine/Component.h>
-#include <stdint.h>
-#include <engine/Shader.h>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <assimp/types.h>
-#include <glm/gtc/matrix_transform.hpp>
-#define INVALID_MATERIAL 0xFFFFFFFF
-
+#include "VertexArrayObject.h"
 
 namespace GameEngine {
 
-	class Transform; 
-	
-	struct Vertex
+	class Mesh
 	{
-		// Position
-		glm::vec3 Position;
-		// Normal
-		glm::vec3 Normal;
-		// TexCoords
-		glm::vec2 TexCoords;
-	};
-
-	class Mesh : public GameEngine::Component
-	{
-	public:
-		/*  Mesh Data  */
-		std::vector<Vertex> vertices;
-		std::vector<GLuint> indices;
-
-		/*  Functions  */
-		// Constructor
-		Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)
-		{
-			this->vertices = vertices;
-			this->indices = indices;
-
-			// Now that we have all the required data, set the vertex buffers and its attribute pointers.
-			this->setupMesh();
-		}
-
-		// Render the mesh
-		void Render(Shader* shader)
-		{
-			// Bind appropriate textures
-			GLuint diffuseNr = 1;
-			GLuint specularNr = 1;
-
-			// Also set each mesh's shininess property to a default value (if you want you could extend this to another mesh property and possibly change this value)
-			glUniform1f(glGetUniformLocation(shader->shaderProgram, "material.shininess"), 16.0f);
-
-			// Draw mesh
-			glBindVertexArray(this->VAO);
-			glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
-			glBindVertexArray(0);
-
-			// Always good practice to set everything back to defaults once configured.
-		}
-
-		void Update(glm::mat4 projection, glm::mat4 view) {
-
-		}
-
-	private:
-		/*  Render data  */
-		GLuint VAO, VBO, EBO;
-
-		/*  Functions    */
-		// Initializes all the buffer objects/arrays
-		void setupMesh()
-		{
-			// Create buffers/arrays
-			glGenVertexArrays(1, &this->VAO);
-			glGenBuffers(1, &this->VBO);
-			glGenBuffers(1, &this->EBO);
-
-			glBindVertexArray(this->VAO);
-			// Load data into vertex buffers
-			glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-			// A great thing about structs is that their memory layout is sequential for all its items.
-			// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
-			// again translates to 3/2 floats which translates to a byte array.
-			glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex), &this->vertices[0], GL_STATIC_DRAW);
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(GLuint), &this->indices[0], GL_STATIC_DRAW);
-
-			// Set the vertex attribute pointers
-			// Vertex Positions
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
-			// Vertex Normals
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, Normal));
-			// Vertex Texture Coords
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, TexCoords));
-
-			glBindVertexArray(0);
-		}
-	};
-
-
-	/*class Mesh : public GameEngine::Component {
 		private:
-
-			Transform* m_transform;
-
-			GLuint vbo[2], vao[1];
-			std::vector<GLfloat> positions;
-			std::vector<GLfloat> colors;
-			Shader* shader;
-			glm::mat4 model;
-			uint32_t positionAttributeIndex = (0);
-			uint32_t colorAttributeIndex = (1);
-
-			static std::vector<GLfloat> ReadFile(const char* file);
-
-			void Render();
-			void ResetMatrix();
-			void Translate(const glm::vec3 &axis);
-
-			// Cleanup all the things we bound and allocated
-			void CleanUp();
-
-			// This is where we setup the model like we saw in the first part
-			bool SetupBufferObjects();
-
-			void SetShader(Shader* _shader);
-
-			void Init();
-
+			VertexArrayObject VAO;
+			GLuint colorbuffer;
+			GLuint uvBuffer;
 		protected:
 		public:
-			Mesh(Shader* _shader) {
-				shader = _shader;
-				model = glm::mat4(1.0);
-				SetupBufferObjects();
-			};
+			Mesh() {};
+			~Mesh() {};
 
-			void Update();
 
-			glm::mat4 GetModel();
+	};
 
-			void SetMatrix(glm::mat4 mvp);
-	};*/
 }

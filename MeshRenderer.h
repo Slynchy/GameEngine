@@ -9,6 +9,8 @@
 #include <engine/Component.h>
 #include <engine/Transform.h>
 
+#include <engine/Mesh.h>
+
 static const GLfloat g_vertex_buffer_data[] = {
 		-1.0f,-1.0f,-1.0f,
 		-1.0f,-1.0f, 1.0f,
@@ -104,6 +106,8 @@ namespace GameEngine {
 			GLuint colorbuffer;
 			GLuint uvBuffer;
 
+			std::vector<Mesh> m_meshes;
+
 			GLuint textureID;
 			GLuint textureUniID;
 			
@@ -132,7 +136,20 @@ namespace GameEngine {
 				glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 
-				//glBindVertexArray(0);
+				glBindVertexArray(0);
+			}
+
+			void AddMesh(Mesh mesh) {
+				m_meshes.push_back(mesh);
+			}
+
+			/// @deprecated for now
+			void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
+				auto test = this->GetParent()->GetComponent<Transform>();
+				auto trans = test->getTranslationMatrix() + glm::translate(offset);
+				auto rot = test->getRotationMatrix();
+				auto scale = test->getScaleMatrix();
+				glm::mat4 mvp = projection * view * (trans * rot * scale);
 			}
 
 			void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
@@ -142,6 +159,7 @@ namespace GameEngine {
 				auto scale = test->getScaleMatrix();
 				glm::mat4 mvp = projection * view * (trans * rot * scale);
 
+				glBindVertexArray(this->vertArrayID);
 				glUseProgram(this->shaderID);
 				glUniformMatrix4fv(matID, 1, GL_FALSE, &mvp[0][0]);
 
@@ -179,7 +197,7 @@ namespace GameEngine {
 				glDisableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);
 
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindVertexArray(0);
 			}
 	};
 }
