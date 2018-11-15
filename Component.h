@@ -24,6 +24,7 @@ namespace GameEngine {
 
 			virtual void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {};
 			virtual void Init() {};
+			virtual void Destroy() {};
 
 			~Component() {
 				m_parent = nullptr;

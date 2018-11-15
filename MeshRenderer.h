@@ -91,8 +91,7 @@ static const GLfloat g_uv_buffer_data[] = {
 };
 
 namespace GameEngine {
-	class MeshRenderer : public GameEngine::Component
-	{
+	class MeshRenderer : public GameEngine::Component {
 	private:
 
 			void Init() {
@@ -141,6 +140,10 @@ namespace GameEngine {
 
 			void AddMesh(Mesh mesh) {
 				m_meshes.push_back(mesh);
+			}
+
+			void Destroy() {
+				delete this;
 			}
 
 			/// @deprecated for now

@@ -15,6 +15,7 @@
 #include <engine/SceneManager.h>
 #include <engine/InputManager.h>
 #include <engine/ResourceManager.h>
+#include <engine/Audio.h>
 
 namespace GameEngine {
 
@@ -25,6 +26,7 @@ namespace GameEngine {
 			GameEngine::SceneManager*		m_sceneManager;
 			GameEngine::InputManager*		m_inputManager;
 			GameEngine::ResourceManager*	m_resourceManager;
+			GameEngine::Audio*				m_audio;
 
 		protected:
 		public:
@@ -51,6 +53,8 @@ namespace GameEngine {
 				m_inputManager = new GameEngine::InputManager();
 
 				m_resourceManager = new GameEngine::ResourceManager();
+
+				m_audio = new GameEngine::Audio();
 
 				m_graphics = new GameEngine::Graphics();
 				int graphicsErrorCode;
@@ -103,6 +107,8 @@ namespace GameEngine {
 				delete m_events;
 				delete m_sceneManager;
 				delete m_inputManager;
+				delete m_resourceManager;
+				delete m_audio;
 			}
 	};
 
