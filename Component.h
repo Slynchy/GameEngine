@@ -22,7 +22,7 @@ namespace GameEngine {
 				return true;
 			}
 
-			virtual void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {};
+			virtual void Update(float delta) {};
 			virtual void Init() {};
 			virtual void Destroy() {};
 

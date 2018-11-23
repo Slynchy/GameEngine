@@ -17,7 +17,7 @@ namespace GameEngine {
 		ALboolean loop = AL_FALSE;
 
 		Sound(const char* path) {
-			alutLoadWAVFile((ALbyte*)"Crash1.wav", &format, &data, &size, &freq, &loop);
+			alutLoadWAVFile((ALbyte*)path, &format, &data, &size, &freq, &loop);
 			
 		}
 

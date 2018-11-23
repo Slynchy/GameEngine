@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <engine/Component.h>
+#include <engine/MeshRenderer.h>
 #include <engine/Transform.h>
 #include <memory>
 #include <map>
@@ -70,15 +71,30 @@ namespace GameEngine {
 				}
 			}
 
-			virtual void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
+			virtual void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset) {
 				std::map<std::type_index, void*>::iterator it;
 				for (it = m_components.begin(); it != m_components.end(); it++)
 				{
-					static_cast<Component*>(it->second)->Update(delta, projection, view, offset);
+					if (it->first == typeid(MeshRenderer)) {
+						static_cast<MeshRenderer*>(it->second)->Render(projection, view, offset);
+						break;
+					}
 				}
 
 				for (size_t i = 0; i < this->m_children.size(); i++) {
-					this->m_children.at(i)->Update(delta, projection, view, offset + this->GetComponent<Transform>()->getPosition());
+					this->m_children.at(i)->Render(projection, view, offset + this->GetComponent<Transform>()->getPosition());
+				}
+			}
+
+			virtual void Update(float delta) {
+				std::map<std::type_index, void*>::iterator it;
+				for (it = m_components.begin(); it != m_components.end(); it++)
+				{
+					static_cast<Component*>(it->second)->Update(delta);
+				}
+
+				for (size_t i = 0; i < this->m_children.size(); i++) {
+					this->m_children.at(i)->Update(delta);
 				}
 			}
 

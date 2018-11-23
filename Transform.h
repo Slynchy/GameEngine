@@ -88,6 +88,10 @@ namespace GameEngine {
 				return m_position;
 			}
 
+			void setScale(float x, float y, float z) {
+				this->m_scale = glm::vec3(x, y, z);
+			}
+
 			void Rotate(glm::vec3 amount, float delta, float speed = 10.0f)
 			{
 				m_angles += (amount * speed * delta);

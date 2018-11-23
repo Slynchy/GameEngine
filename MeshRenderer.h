@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <string>
 #include <fstream>
@@ -8,199 +7,69 @@
 #include <vector>
 #include <engine/Component.h>
 #include <engine/Transform.h>
-
 #include <engine/Mesh.h>
-
-static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f
-};
-
-// Two UV coordinatesfor each vertex. They were created with Blender.
-static const GLfloat g_uv_buffer_data[] = {
-	0.000059f, 0.000004f,
-	0.000103f, 0.336048f,
-	0.335973f, 0.335903f,
-	1.000023f, 0.000013f,
-	0.667979f, 0.335851f,
-	0.999958f, 0.336064f,
-	0.667979f, 0.335851f,
-	0.336024f, 0.671877f,
-	0.667969f, 0.671889f,
-	1.000023f, 0.000013f,
-	0.668104f, 0.000013f,
-	0.667979f, 0.335851f,
-	0.000059f, 0.000004f,
-	0.335973f, 0.335903f,
-	0.336098f, 0.000071f,
-	0.667979f, 0.335851f,
-	0.335973f, 0.335903f,
-	0.336024f, 0.671877f,
-	1.000004f, 0.671847f,
-	0.999958f, 0.336064f,
-	0.667979f, 0.335851f,
-	0.668104f, 0.000013f,
-	0.335973f, 0.335903f,
-	0.667979f, 0.335851f,
-	0.335973f, 0.335903f,
-	0.668104f, 0.000013f,
-	0.336098f, 0.000071f,
-	0.000103f, 0.336048f,
-	0.000004f, 0.671870f,
-	0.336024f, 0.671877f,
-	0.000103f, 0.336048f,
-	0.336024f, 0.671877f,
-	0.335973f, 0.335903f,
-	0.667969f, 0.671889f,
-	1.000004f, 0.671847f,
-	0.667979f, 0.335851f
-};
 
 namespace GameEngine {
 	class MeshRenderer : public GameEngine::Component {
 	private:
+		/// ID of shader assigned to this MeshRenderer
+		GLuint shaderID;
 
-			void Init() {
+		/// ID of texture assigned to this MeshRenderer
+		GLuint textureID;
 
-			}
+		/// ID of texture uniform in the shader assigned to this MeshRenderer
+		GLuint textureUniID;
 
-		public:
-			GLuint shaderID;
-			GLuint vertArrayID;
-			GLuint vertBuffer;
-			GLuint colorbuffer;
-			GLuint uvBuffer;
+		/// Model matrix for this meshrenderer
+		glm::mat4 modelMat;
 
-			std::vector<Mesh> m_meshes;
+		/// ID for model matrix uniform in shader assigned to this MeshRenderer
+		GLuint matID;
 
-			GLuint textureID;
-			GLuint textureUniID;
-			
-			glm::mat4 modelMat; 
-			GLuint matID;
+		/// Vector of meshes to be rendered by this MeshRenderer
+		std::vector<Mesh> m_meshes;
 
-			MeshRenderer(GLuint shaderID, GLuint texID = 0) {
-				this->textureID = texID;
-				this->modelMat = glm::mat4(1.0f);
+		/// Draws the mesh(es) to the GPU using the proj/view matrices supplied
+		///
+		/// @private
+		/// @param[in]	projection	The projection matrix to use
+		/// @param[in]	view		The view matrix supplied from the camera
+		/// @param[in]	offset		The position offset to draw at (usually additive of all parents positions)
+		void Draw(glm::mat4 projection, glm::mat4 view, glm::vec3 offset);
 
-				glGenVertexArrays(1, &this->vertArrayID);
-				glBindVertexArray(this->vertArrayID);
+	public:
+		MeshRenderer(GLuint shaderID, GLuint texID = 0);
 
-				this->shaderID = shaderID;
-				this->matID = glGetUniformLocation(this->shaderID, "MVP");
-				textureUniID = glGetUniformLocation(this->shaderID, "myTextureSampler");
+		/// Initializes the MeshRenderer with data from an OBJ
+		/// @bug Despite knowing what textures to use, still needs user to manually supply it
+		/// @param[in]	_filepath	The path to the obj file
+		void InitFromOBJ(std::string _filepath);
 
-				// gen
-				glGenBuffers(1, &this->vertBuffer);
-				// bind
-				glBindBuffer(GL_ARRAY_BUFFER, this->vertBuffer);
-				// give to ogl
-				glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+		/// Adds a mesh to the MeshRenderer
+		/// @param[in]	mesh	The mesh to add
+		void AddMesh(Mesh mesh) { m_meshes.push_back(mesh); }
 
-				glGenBuffers(1, &uvBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+		/// Destroys this component
+		/// @bug FIX THIS, BREAKS IF NOT A POINTER
+		/// @todo FIX THIS, BREAKS IF NOT A POINTER
+		void Destroy() { delete this; }
 
-				glBindVertexArray(0);
-			}
+		/// Gets the model-view-projection matrix for this MeshRenderer
+		/// @param[in]	projection	The projection matrix to use
+		/// @param[in]	view		The view matrix supplied from the camera
+		/// @param[in]	offset		The position offset to draw at (usually additive of all parents positions)
+		glm::mat4 getMVP(glm::mat4 projection, glm::mat4 view, glm::vec3 offset);
 
-			void AddMesh(Mesh mesh) {
-				m_meshes.push_back(mesh);
-			}
+		/// Draws the mesh(es) to the GPU using the proj/view matrices supplied
+		///
+		/// @private
+		/// @param[in]	projection	The projection matrix to use
+		/// @param[in]	view		The view matrix supplied from the camera
+		/// @param[in]	offset		The position offset to draw at (usually additive of all parents positions)
+		void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) { Draw(projection, view, offset); }
 
-			void Destroy() {
-				delete this;
-			}
-
-			/// @deprecated for now
-			void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
-				auto test = this->GetParent()->GetComponent<Transform>();
-				auto trans = test->getTranslationMatrix() + glm::translate(offset);
-				auto rot = test->getRotationMatrix();
-				auto scale = test->getScaleMatrix();
-				glm::mat4 mvp = projection * view * (trans * rot * scale);
-			}
-
-			void Update(float delta, glm::mat4 projection, glm::mat4 view, glm::vec3 offset = glm::vec3(0.0f)) {
-				auto test = this->GetParent()->GetComponent<Transform>();
-				auto trans = test->getTranslationMatrix() + glm::translate(offset);
-				auto rot = test->getRotationMatrix();
-				auto scale = test->getScaleMatrix();
-				glm::mat4 mvp = projection * view * (trans * rot * scale);
-
-				glBindVertexArray(this->vertArrayID);
-				glUseProgram(this->shaderID);
-				glUniformMatrix4fv(matID, 1, GL_FALSE, &mvp[0][0]);
-
-				// Bind our texture in Texture Unit 0
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, this->textureID);
-				// Set our "myTextureSampler" sampler to use Texture Unit 0
-				glUniform1i(this->textureUniID, 0);
-
-				// 1rst attribute buffer : vertices
-				glEnableVertexAttribArray(0);
-				glBindBuffer(GL_ARRAY_BUFFER, this->vertBuffer);
-				glVertexAttribPointer(
-					0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-					3,                  // size
-					GL_FLOAT,           // type
-					GL_FALSE,           // normalized?
-					0,                  // stride
-					(void*)0            // array buffer offset
-				);
-
-				glEnableVertexAttribArray(1);
-				glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
-				glVertexAttribPointer(
-					1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-					2,                                // size : U+V => 2
-					GL_FLOAT,                         // type
-					GL_FALSE,                         // normalized?
-					0,                                // stride
-					(void*)0                          // array buffer offset
-				);
-
-				// Draw the cube !
-				glDrawArrays(GL_TRIANGLES, 0, 12 * 3); // 12*3 indices starting at 0 -> 12 triangles -> 6 squares
-				glDisableVertexAttribArray(0);
-				glDisableVertexAttribArray(1);
-
-				glBindVertexArray(0);
-			}
+		/// @deprecated
+		void Update(float delta) {};
 	};
 }
