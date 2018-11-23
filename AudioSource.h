@@ -8,45 +8,31 @@ namespace GameEngine {
 	class Transform;
 	class Sound;
 
+	/// Component class for AudioSources
 	class AudioSource : public GameEngine::Component {
 	
 	private:
+		/// Currently unused, not deprecated
+		/// @unused
 		Transform* trans;
+
+		/// OpenAL index for buffer data
 		ALuint buffer;
+
+		/// OpenAL index for the audiosource data
 		ALuint source;
 
 	protected:
 	public:
-		AudioSource(Sound* _snd) {
-			alGenBuffers((ALuint)1, &buffer);
-			alGenSources((ALuint)1, &source);
-			alSourcef(source, AL_PITCH, 1);
-			alSourcef(source, AL_GAIN, 1);
-			alSource3f(source, AL_POSITION, 0, 0, 0);
-			alSource3f(source, AL_VELOCITY, 0, 0, 0);
-			alSourcei(source, AL_LOOPING, AL_FALSE);
+		AudioSource(Sound* _snd);
 
-			alBufferData(
-				buffer,
-				_snd->format,
-				_snd->data,
-				_snd->size,
-				_snd->freq
-			);
+		/// Play whatever audio buffer is bound this audiosource
+		void Play();
 
-			alSourcei(source, AL_BUFFER, buffer);
-		};
-
-		void Play() {
-			alSourcePlay(source);
-		};
-
+		/// @todo FIXME
 		void Destroy() { delete this; }
 
-		~AudioSource() {
-			alDeleteSources(1, &source);
-			alDeleteBuffers(1, &buffer);
-		}
+		~AudioSource();
 
 	};
 

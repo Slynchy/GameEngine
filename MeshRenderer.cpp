@@ -74,7 +74,7 @@ void GameEngine::MeshRenderer::InitFromOBJ(std::string _filename) {
 	std::string warn; 
 	
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str())) {
-		printf("Something went wrong when loading OBJ file %s \n", _filename);
+		printf("Something went wrong when loading OBJ file %s \n", _filename.c_str());
 		if (!err.empty()) {
 			printf(err.c_str());
 		}
@@ -91,7 +91,7 @@ void GameEngine::MeshRenderer::InitFromOBJ(std::string _filename) {
 		size_t index_offset = 0;
 
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-			int fv = shapes[s].mesh.num_face_vertices[f];
+			size_t fv = shapes[s].mesh.num_face_vertices[f];
 			std::vector<tinyobj::real_t> vert;
 			std::vector<tinyobj::real_t> uv;
 

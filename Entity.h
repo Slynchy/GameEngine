@@ -1,108 +1,74 @@
 #pragma once
 
-#include <vector>
-#include <engine/Component.h>
-#include <engine/MeshRenderer.h>
-#include <engine/Transform.h>
-#include <memory>
-#include <map>
 #include <typeindex>
+#include <vector>
+#include <map>
+#include <glm/glm.hpp>
 
 namespace GameEngine {
+
+	/// Entity baseclass; think of it as GameObject from Unity
 	class Entity {
 		private:
+
+			/// Mapping for components to type indices
 			std::map<std::type_index, void*> m_components;
 
+			/// The children of this entity
+			/// @bug This should be handled by the Transform component.
 			std::vector<Entity*> m_children;
 
+			/// The parent entity (if not root)
 			Entity* m_parent = nullptr;
 
 		protected:
 		public:
-			Entity() {
-				this->AddComponent(new Transform());
-			}
+			Entity();
+			~Entity();
 
-			Entity* getParent() {
-				return this->m_parent;
-			}
+			/// Gets the parent entity or nullptr if non-existent
+			Entity* getParent();
 
-			void setParent(Entity* _par) {
-				this->m_parent = _par;
-			}
+			/// Sets the parent entity to the specified pointer
+			void setParent(Entity* _par);
 
-			void AddChild(Entity* _child) {
-				if (_child->getParent() != nullptr) {
-					_child->getParent()->RemoveChild(_child);
-				}
+			/// Adds a child to this entity (used in calculating relative positions)
+			void AddChild(Entity* _child);
 
-				this->m_children.push_back(_child);
-				_child->setParent(this);
-			}
+			/// Removes the specified child from this entity
+			void RemoveChild(Entity* _child);
 
-			void RemoveChild(Entity* _child) {
-				for (size_t i = 0; i < this->m_children.size(); i++) {
-					auto curr = this->m_children.at(i);
+			/// Renders the entity using meshrenderers if it can find it
+			/// @todo This does not consider 2D objects
+			void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset);
 
-					if (curr == _child) {
-						this->m_children.erase(this->m_children.begin() + i);
-						return;
+			/// Updates the entity, children, and components using the delta time
+			virtual void Update(float delta);
+
+			// The following two functions were previously in Entity.cpp but due to linking errors, they're 
+			// actually defined here.
+
+				/// Adds the specified component to this entity and initializes
+				template <class t>
+				void AddComponent(t* _comp) {
+					m_components.insert(std::make_pair<std::type_index, void*>(typeid(t), (void*)_comp));
+
+					auto temp = static_cast<Component*>(_comp);
+					temp->SetParent(this);
+					temp->Init();
+				};
+
+				/// Gets the specified component from this object if it exists, otherwise returns nullptr.
+				template <class t>
+				t* GetComponent() {
+					std::type_index typeName = typeid(t);
+					for (auto it = this->m_components.begin(); it != this->m_components.end(); it++)
+					{
+						if (it->first == typeName) {
+							return static_cast<t*>(it->second);
+						}
 					}
-				}
-			}
-
-			template <class t>
-			void AddComponent(t* _comp) {
-				m_components.insert(std::make_pair<std::type_index, void*>(typeid(t), (void*)_comp));
-				
-				auto temp = static_cast<Component*>(_comp);
-				temp->SetParent(this);
-				temp->Init();
-			}
-
-			template <class t>
-			t* GetComponent(){
-				std::type_index typeName = typeid(t);
-				for (auto it = this->m_components.begin(); it != this->m_components.end(); it++)
-				{
-					if (it->first == typeName) {
-						return static_cast<t*>(it->second);
-					}
-				}
-			}
-
-			virtual void Render(glm::mat4 projection, glm::mat4 view, glm::vec3 offset) {
-				std::map<std::type_index, void*>::iterator it;
-				for (it = m_components.begin(); it != m_components.end(); it++)
-				{
-					if (it->first == typeid(MeshRenderer)) {
-						static_cast<MeshRenderer*>(it->second)->Render(projection, view, offset);
-						break;
-					}
-				}
-
-				for (size_t i = 0; i < this->m_children.size(); i++) {
-					this->m_children.at(i)->Render(projection, view, offset + this->GetComponent<Transform>()->getPosition());
-				}
-			}
-
-			virtual void Update(float delta) {
-				std::map<std::type_index, void*>::iterator it;
-				for (it = m_components.begin(); it != m_components.end(); it++)
-				{
-					static_cast<Component*>(it->second)->Update(delta);
-				}
-
-				for (size_t i = 0; i < this->m_children.size(); i++) {
-					this->m_children.at(i)->Update(delta);
-				}
-			}
-
-			~Entity() {
-				for (std::pair<std::type_index, void*> comp : m_components) {
-					static_cast<Component*>(comp.second)->Destroy();
-				}
-				m_components.clear();
-			}
+					return nullptr;
+				};
 	};
 }

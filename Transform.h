@@ -7,6 +7,8 @@
 #include <glm/gtx/transform.hpp>
 
 namespace GameEngine {
+
+	/// Transform component for representing objects in 2D/3D
 	class Transform : public GameEngine::Component {
 		private:
 			glm::vec3 m_position;
@@ -21,10 +23,14 @@ namespace GameEngine {
 				m_scale = glm::vec3(1, 1, 1);
 			}
 
+			/// Gets the translation matrix based on the position
+			/// @returns Matrix4x4 for use in constructing model matrix
 			glm::mat4 getTranslationMatrix() {
 				return glm::translate(glm::mat4(1.0f), this->m_position);
 			}
 
+			/// Gets the rotation matrix based on the orientation
+			/// @returns Matrix4x4 for use in constructing model matrix
 			glm::mat4 getRotationMatrix() {
 				auto one = glm::rotate(
 					glm::mat4(1.0f), 
@@ -44,66 +50,87 @@ namespace GameEngine {
 				return (three);
 			}
 
+			/// Gets the scale matrix based on the scale
+			/// @returns Matrix4x4 for use in constructing model matrix
 			glm::mat4 getScaleMatrix() {
 				return glm::scale(this->m_scale);
 			}
 
+			/// Sets the position of the transform
 			glm::vec3 setPosition(glm::vec3 _pos) {
 				return this->m_position = _pos;
 			}
 
+			/// Gets the position of the transform
 			glm::vec3 getPosition() {
 				return this->m_position;
 			}
 
+			/// Gets a pointer to the position 
 			glm::vec3* getPositionPtr() {
 				return &this->m_position;
 			}
 
+			/// Gets X position
 			float x() {
 				return m_position.x;
 			}
 
+			/// Sets X position
 			float x(float _x) {
 				return m_position.x = _x;
 			}
 
+			/// Gets Y position
 			float y() {
 				return m_position.y;
 			}
 
+			/// Sets Y position
 			float y(float _y) {
 				return m_position.y = _y;
 			}
 
+			/// Gets Z position
 			float z() {
 				return m_position.z;
 			}
 
+			/// Sets Z position
 			float z(float _z) {
 				return m_position.z = _z;
 			}
 
+			/// Gets position
 			glm::vec3 position() {
-				return m_position;
+				return this->getPosition();
 			}
 
+			/// Sets scale of the transform
 			void setScale(float x, float y, float z) {
 				this->m_scale = glm::vec3(x, y, z);
 			}
 
+			/// Rotates the transform
+			/// @param[in] amount The amount to rotate by on each axis
+			/// @param[in] delta Delta time 
+			/// @param[in] speed Speed of rotation
 			void Rotate(glm::vec3 amount, float delta, float speed = 10.0f)
 			{
 				m_angles += (amount * speed * delta);
 			}
 
-			void Calculate()
-			{
-			}
+			/// @deprecated Unused?
+			void Calculate(){}
 
-			void Move(glm::vec3 Amount, float Delta, float Speed = 10.f)
+			/// Translate the transform
+			/// @param[in] amount The amount to translate by on each axis
+			/// @param[in] delta Delta time 
+			/// @param[in] speed Speed of translation
+			/// @bug Does not consider speed
+			void Move(glm::vec3 amount, float delta, float Speed = 10.f)
 			{
-				this->m_position += Amount * Delta;
+				this->m_position += amount * delta;
 			}
 	};
 }

@@ -1,46 +1,41 @@
 #pragma once
 
 #include <vector>
-#include <engine/Entity.h>
-#include <engine/Camera.h>
 
 namespace GameEngine {
+
+	class Camera;
+	class Entity;
 
 	class Scene
 	{
 	protected:
+
+		/// Basic scene graph using vectors
+		/// @todo Refactor into format that support spatial partitioning easier
 		std::vector<GameEngine::Entity*> m_sceneGraph;
+
+		/// Current camera in scene
 		GameEngine::Camera* camera;
 
 	public:
-		Scene() {
-			camera = new GameEngine::Camera();
-		};
+		Scene();
+		~Scene();
 
-		void ClearScene() {
-			for (Entity* ent : m_sceneGraph) {
-				delete ent;
-			}
-			m_sceneGraph.clear();
-		}
+		/// Intended to be overriden
+		virtual void Update();
 
-		Camera* getCamera() {
-			return this->camera;
-		}
+		/// Clears the current scene of all objects and destroys them (sans camera)
+		void ClearScene();
 
-		virtual void Update() {};
+		/// Gets the current camera in the scene
+		Camera* getCamera();
 
-		size_t Add(Entity* _ent) {
-			m_sceneGraph.push_back(_ent);
-			return m_sceneGraph.size();
-		}
-
-		~Scene() {
-			for (Entity* ent : m_sceneGraph) {
-				delete ent;
-			}
-			m_sceneGraph.empty();
-		};
+		/// Adds an object to the scene
+		/// @param[in] _ent Pointer to entity to add to scene
+		/// @returns Number of objects in scene (whatever it was + 1)
+		/// @bug No remove function? We can only add?
+		size_t Add(Entity* _ent);
 	};
 
 }

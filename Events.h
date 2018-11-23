@@ -6,6 +6,10 @@
 #include <functional>
 
 namespace GameEngine {
+
+	/// Simple class for event management via bound EventObjects to SDL Events
+	/// @deprecated Only used for SDL_Quit
+	/// @detail Won't move code contents to CPP since minimal code and includes
 	class Events {
 		private:
 			SDL_Event m_events;

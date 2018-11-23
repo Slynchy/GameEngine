@@ -7,120 +7,81 @@
 
 namespace GameEngine {
 
+	/// Camera entity class; every scene needs at least one
 	class Camera : public Entity {
 		private:
+
+			/// Pointer to transform component that is automagically added to all Entitys
 			Transform* transform;
 
+			/// Pointer to a position vector of an object to lookat
 			glm::vec3* lookAtTarget = nullptr;
 
 		protected:
 		public:
+			/// The projection matrix of the camera
 			glm::mat4 projectionMatrix;
+
+			/// The view matrix of the camera
 			glm::mat4 viewMatrix; 
+
+			/// The front vector
 			glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
+
+			/// The up vector
 			glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
+			// Rotations
 			float pitch = 0.0f;
 			float yaw = 0.0f;
 			float roll = 0.0f;
 
-			void lockToTarget(Entity* target) {
-				this->lookAtTarget = target->GetComponent<Transform>()->getPositionPtr();
-				this->UpdateViewMatrix();
-			}
+			Camera();
 
-			void clearLockToTarget() {
-				this->lookAtTarget = nullptr;
-			}
+			/// Locks the camera view to look at the target until told to stop
+			void lockToTarget(Entity* target);
 
-			void setPosition(glm::vec3 _pos) {
-				this->transform->setPosition(_pos);
-				this->UpdateViewMatrix();
-			}
+			/// Stops the camera looking at a target
+			void clearLockToTarget();
 
-			Camera()
-			{
-				this->transform = this->GetComponent<Transform>();
-				//this->transform->setPosition(glm::vec3(0, 3, 3));
+			/// Sets the position of the camera
+			void setPosition(glm::vec3 _pos);
 
-				this->projectionMatrix = glm::perspective(45.0f, (float)1280 / (float)720, 0.1f, 100.0f);
+			/// Gets the cameras view matrix
+			/// @deprecated ? The view matrix is public now?
+			glm::mat4 GetViewMatrix();
 
-				this->UpdateViewMatrix();
-			}
+			/// Rotates the camera direction from Euler angles
+			/// @bug Currently ignores roll
+			/// @param[in] _pitch The pitch to rotate by
+			/// @param[in] _yaw The yaw to rotate by
+			/// @param[in] _roll The roll to rotate by
+			void Rotate(float _pitch, float _yaw, float _roll);
 
-			glm::mat4 GetViewMatrix()
-			{
-				return viewMatrix;
-			}
+			/// Moves the camera by the offset specified
+			/// @param[in] pos glm::vec3 for the position offset
+			/// @param[in] _delta The delta time as a floating-point 
+			/// @param[in] _speed The speed of movement
+			void Move(glm::vec3 pos, float _delta = 0.1f, float _speed = 1.0f);
 
-			void Rotate(float _pitch, float _yaw, float _roll) {
+			/// Moves the camera by the offset specified
+			/// @param[in] _x, _y, _z Amount to offset by
+			/// @param[in] _delta The delta time as a floating-point 
+			/// @param[in] _speed The speed of movement
+			void Move(float _x, float _y, float _z, float _delta = 0.1f, float _speed = 1.0f);
 
-				pitch += _pitch * 0.05f;
-				yaw += _yaw * 0.05f;
+			/// Moves the camera forward at a certain speed
+			/// @bug Doesn't take into account delta time
+			/// @param[in] _speed The speed/amount of movement
+			void MoveForward(float _speed = 1.0f);
 
-				glm::vec3 _front;
-				_front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-				_front.y = sin(glm::radians(pitch));
-				_front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-				front = glm::normalize(_front);
+			/// Moves the camera to the right at a certain speed
+			/// @bug Doesn't take into account delta time
+			/// @param[in] _speed The speed/amount of movement
+			void MoveRight(float _speed = 1.0f);
 
-				this->UpdateViewMatrix();
-			}
-
-			void Move(glm::vec3 pos, float _delta = 0.1f, float _speed = 1.0f) {
-				this->Move(pos.x, pos.y, pos.z, _delta, _speed);
-			}
-
-			void Move(float _x, float _y, float _z, float _delta = 0.1f, float _speed = 1.0f) {
-
-				this->MoveForward(_z);
-				this->MoveRight(_x);
-				
-				this->transform->setPosition(this->transform->getPosition() + glm::vec3(0, _y, 0));
-
-				this->UpdateViewMatrix();
-			}
-
-			void MoveForward(float _speed = 1.0f) {
-				auto test = this->transform->getPosition() + (this->front * _speed);
-
-				this->transform->setPosition(test);
-
-				this->UpdateViewMatrix();
-			}
-
-			void MoveRight(float _speed = 1.0f) {
-				auto right = glm::cross(glm::normalize(front), glm::normalize(up));
-
-				auto test = this->transform->getPosition() + (right * _speed);
-
-				this->transform->setPosition(test);
-
-				this->UpdateViewMatrix();
-			}
-
-			void UpdateViewMatrix() {
-
-				if (this->lookAtTarget == nullptr) {
-					this->viewMatrix = glm::lookAt(
-						this->transform->getPosition(),
-						(this->transform->getPosition() + this->front),
-						this->up
-					);
-				}
-				else {
-					this->viewMatrix = glm::lookAt(
-						this->transform->getPosition(),
-						*this->lookAtTarget,
-						this->up
-					);
-				}
-
-				/*this->viewMatrix =
-					glm::translate(this->transform->getPosition()) *
-					glm::rotate(1.0f, glm::vec3(pitch, yaw, roll)) *
-					glm::scale(glm::vec3(1.0f));*/
-			}
+			/// Updates the view matrix of the camera based on position and direction (or target)
+			void UpdateViewMatrix();
 	};
 
 }

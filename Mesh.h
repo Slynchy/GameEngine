@@ -1,45 +1,43 @@
 #pragma once
 
 #include <GL/glew.h>
-#include "VertexArrayObject.h"
+#include <vector>
 
 namespace GameEngine {
 
+	/// Class for constructing/holding mesh-specific data 
 	class Mesh
 	{
 		private:
-			//VertexArrayObject VAO;
+
 		protected:
 		public:
 
+			// These are public because this class is a glorified struct
+			
+			/// The GL ID for the vertex array
 			GLuint vertArrayID;
+			
+			/// The GL ID for the vertex buffer
 			GLuint vertBuffer;
+
+			/// The GL ID for the color buffer
 			GLuint colorbuffer;
+
+			/// The GL ID for the uv buffer
 			GLuint uvBuffer;
 
-			Mesh() {
-				glGenVertexArrays(1, &vertArrayID);
-				glGenBuffers(1, &uvBuffer);
-				glGenBuffers(1, &vertBuffer);
+			/// Initializes the mesh with the parameterised data
+			/// @param[in] vertex_buffer_data The buffer data for the vertexes
+			/// @param[in] uv_buffer_data The buffer data for the UV co-ords
+			void Init(std::vector<GLfloat> vertex_buffer_data, std::vector<GLfloat> uv_buffer_data);
+
+			Mesh();
+
+			/// @bug does not cleanup GL data
+			~Mesh() {
+				
 			};
-
-			void Init(std::vector<GLfloat> vertex_buffer_data, std::vector<GLfloat> uv_buffer_data) {
-				glBindVertexArray(this->vertArrayID);
-				// gen
-				// bind
-				glBindBuffer(GL_ARRAY_BUFFER, this->vertBuffer);
-				// give to ogl
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertex_buffer_data.size(), &vertex_buffer_data.at(0), GL_STATIC_DRAW);
-
-				glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * uv_buffer_data.size(), &uv_buffer_data.at(0), GL_STATIC_DRAW);
-
-				glBindVertexArray(0);
-			}
-
-			~Mesh() {};
-
-
 	};
 
 }

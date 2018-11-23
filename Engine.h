@@ -3,7 +3,8 @@
 /// \brief		Header file for game engine
 /// \version	0.0.0
 /// \date		October 2018
-/// \details	The header file for declaring the engine and its components.
+/// \details	The header file for declaring the engine and its components. The doxygen formatting will- to your surprise- mostly not use JavaDoc (JSDoc) standards.
+
 #pragma once
 
 #include <SDL2/SDL.h>
@@ -21,101 +22,58 @@ namespace GameEngine {
 
 	class Engine {
 		private:
+			/// Engine component for handling graphics/rendering
 			GameEngine::Graphics*			m_graphics;
+
+			/// Engine component for handling (SDL) events
 			GameEngine::Events*				m_events;
+
+			/// Engine component for keeping track of scenes and objects
 			GameEngine::SceneManager*		m_sceneManager;
+
+			/// Engine component for managing input (via SDL)
 			GameEngine::InputManager*		m_inputManager;
+
+			/// Engine component for handling loading/fetching resources
 			GameEngine::ResourceManager*	m_resourceManager;
+
+			/// Engine component for handling audio
 			GameEngine::Audio*				m_audio;
 
 		protected:
 		public:
-			Engine() {
 
-			}
-
+			/// Enumerator for possible error codes when engine is initializing
 			enum ErrorCodes {
-				SDL_FAILED_TO_INIT = -1
+				SDL_FAILED_TO_INIT = -1,
+				ALL_OKAY = 0
 			};
 
-			GameEngine::ResourceManager* GetResourceManager() {
-				return this->m_resourceManager;
-			}
+			GameEngine::InputManager*		GetInputManager()			{ return m_inputManager; }
+			GameEngine::SceneManager*		GetSceneManager()			{ return m_sceneManager; }
+			GameEngine::Events*				GetEvents()					{ return m_events; }
+			GameEngine::Graphics*			GetGraphics()				{ return m_graphics; }
+			GameEngine::ResourceManager*	GetResourceManager()		{ return this->m_resourceManager; }
 
-			int Init() {
-				if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-				{
-					return GameEngine::Engine::ErrorCodes::SDL_FAILED_TO_INIT;
-				}
-
-				m_events = new GameEngine::Events();
-
-				m_inputManager = new GameEngine::InputManager();
-
-				m_resourceManager = new GameEngine::ResourceManager();
-
-				m_audio = new GameEngine::Audio();
-
-				m_graphics = new GameEngine::Graphics();
-				int graphicsErrorCode;
-				if ((graphicsErrorCode = m_graphics->Init()) < 0) {
-					return graphicsErrorCode;
-				} else {
-					if (SDL_CaptureMouse(SDL_TRUE) != 0) {
-						printf("SDL_CaptureMouse failed: %s\n", SDL_GetError());
-					};
-					if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0) {
-						printf("SDL_SetRelativeMouseMode failed: %s\n", SDL_GetError());
+			/// @param[in] autoInit If true, constructor will also initialize engine. Discouraged but possible.
+			Engine(bool autoInit = false) {
+				if (autoInit) {
+					int err = Init();
+					if (err) {
+						printf("Error encountered when auto init'ing engine. Code: %i \n", err);
 					}
 				}
-
-				m_sceneManager = new GameEngine::SceneManager(m_graphics);
-
-				return 0;
 			}
 
-			void Render() {
-				m_graphics->PreRender();
-				m_sceneManager->Render();
-				m_graphics->PostRender();
-			}
+			/// Initializes the engine, setting up the handlers needed and a basic scenegraph
+			/// @returns Non-zero error code if error encountered, zero if all-okay. See this->ErrorCodes
+			int Init();
 
-			void Update(float delta) {
-				m_events->Update();
-				//m_inputManager->Update();
-				//m_graphics->PreRender();
+			void Render();
 
-				m_sceneManager->Update(delta);
-				//m_graphics->SetMatrix(&(*testEntity), dynamic_cast<Mesh*>(testEntity->GetComponent("Mesh").get())->GetModel());
-				//testEntity->Update();
+			void Update(float delta);
 
-				//m_graphics->PostRender();
-			}
-
-			GameEngine::InputManager* GetInputManager() {
-				return m_inputManager;
-			}
-
-			GameEngine::SceneManager* GetSceneManager() {
-				return m_sceneManager;
-			}
-
-			GameEngine::Events* GetEvents() {
-				return m_events;
-			}
-
-			GameEngine::Graphics* GetGraphics() {
-				return m_graphics;
-			}
-
-			~Engine() {
-				delete m_graphics;
-				delete m_events;
-				delete m_sceneManager;
-				delete m_inputManager;
-				delete m_resourceManager;
-				delete m_audio;
-			}
+			~Engine();
 	};
 
 }

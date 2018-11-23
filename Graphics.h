@@ -9,84 +9,60 @@
 #include <engine/Camera.h>
 
 namespace GameEngine {
+
+	/// Graphics handler class for the engine
+	/// @todo Would be nice if this class could also wrap GL functions (but this is out of scope)
 	class Graphics {
 		private:
+
+			/// SDL Window pointer
 			SDL_Window*		m_window		= nullptr;
+
+			/// SDL OpenGL binding context pointer
 			SDL_GLContext	m_context		= nullptr;
 
+			/// Swaps buffer to screen using SDL
 			void SwapBuffer() {
 				SDL_GL_SwapWindow(m_window);
 			}
 
+			/// Clears screen buffer to grey
 			void ClearToGray() {
 				glClearColor(0.5, 0.5, 0.5, 1.0);
 				glClear(GL_COLOR_BUFFER_BIT);
 			}
 		protected:
 		public:
+
+			/// Error codes to return during initialization
 			enum ErrorCodes {
-				SDL_WINDOW_FAILED_TO_INIT = -1
+				SDL_WINDOW_FAILED_TO_INIT = -1,
+				ALL_OKAY = 0
 			};
 
-			Graphics() {
-			}
+			Graphics() {}
+			~Graphics() {}
 			
-			int Init() {
-				m_window = SDL_CreateWindow(
-					"My Game",
-					SDL_WINDOWPOS_CENTERED,
-					SDL_WINDOWPOS_CENTERED,
-					512,
-					512,
-					SDL_WINDOW_OPENGL
-				);
+			/// Initializes the graphics engine via SDL
+			/// @param[in] title Name of the window
+			/// @param[in] screenPosX,screenPosY Position of the window on the user's screen
+			/// @param[in] resolutionX,resolutionY The resolution to render at (be sure to update projection matrix of camera)
+			/// @bug Doesn't support fullscreen
+			int Init(
+				const char* title = "GameEngine",
+				int screenPosX = SDL_WINDOWPOS_CENTERED,
+				int screenPosY = SDL_WINDOWPOS_CENTERED,
+				int resolutionX = 512,
+				int resolutionY = 512
+			);
 
-				if (m_window == nullptr) {
-					return GameEngine::Graphics::ErrorCodes::SDL_WINDOW_FAILED_TO_INIT;
-				}
+			/// @deprecated Not really sure why it's commented-out tbh...
+			void SetMatrix(Entity* _ent, const glm::mat4 &model);
 
-				// Set our OpenGL version.
-				// SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+			/// Function called before rendering scene
+			void PreRender();
 
-				// 3.2 is part of the modern versions of OpenGL, but most video cards whould be able to run it
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-				// Turn on double buffering with a 24bit Z buffer.
-				// You may need to change this to 16 or 32 for your system
-				SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-				m_context = SDL_GL_CreateContext(m_window);
-
-				glewExperimental = GL_TRUE; 
-				auto returnNum = glewInit();
-				if (returnNum != GLEW_OK) {
-					std::cout << glewGetErrorString(returnNum) << "\n";
-				}
-
-				glEnable(GL_DEPTH_TEST);
-				glDepthFunc(GL_LEQUAL);
-
-				return 0;
-			}
-
-			void PreRender() {
-				glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-				ClearToGray();
-			}
-
-			void SetMatrix(Entity* _ent, const glm::mat4 &model)
-			{
-//				glm::mat4 mvp = camera->projectionMatrix * camera->viewMatrix * model;
-//				_ent->GetComponent<Mesh>()->SetMatrix(mvp);
-			}
-
-			void PostRender() {
-				SwapBuffer();
-			}
-
-			~Graphics() {
-
-			}
+			/// Function called after rendering scene
+			void PostRender();
 	};
 }

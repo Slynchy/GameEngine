@@ -9,8 +9,6 @@ namespace GameEngine {
 
 	private:
 
-
-		// Two UV coordinatesfor each vertex. They were created with Blender.
 		const std::vector<GLfloat> g_cube_uv_buffer_data = {
 			0.000059f, 0.000004f,
 			0.000103f, 0.336048f,
