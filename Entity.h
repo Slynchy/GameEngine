@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <glm/glm.hpp>
+#include <memory>
 
 namespace GameEngine {
 
@@ -16,10 +17,10 @@ namespace GameEngine {
 
 			/// The children of this entity
 			/// @bug This should be handled by the Transform component.
-			std::vector<Entity*> m_children;
+			std::vector<std::shared_ptr<Entity>> m_children;
 
 			/// The parent entity (if not root)
-			Entity* m_parent = nullptr;
+			std::weak_ptr<Entity> m_parent;
 
 		protected:
 		public:
@@ -27,16 +28,16 @@ namespace GameEngine {
 			~Entity();
 
 			/// Gets the parent entity or nullptr if non-existent
-			Entity* getParent();
+			std::weak_ptr<Entity> getParent();
 
 			/// Sets the parent entity to the specified pointer
-			void setParent(Entity* _par);
+			void setParent(std::shared_ptr<Entity> _par);
 
 			/// Adds a child to this entity (used in calculating relative positions)
-			void AddChild(Entity* _child);
+			void AddChild(std::shared_ptr<Entity> _child);
 
 			/// Removes the specified child from this entity
-			void RemoveChild(Entity* _child);
+			void RemoveChild(std::shared_ptr<Entity> _child);
 
 			/// Renders the entity using meshrenderers if it can find it
 			/// @todo This does not consider 2D objects

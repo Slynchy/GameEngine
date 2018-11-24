@@ -9,24 +9,28 @@ GameEngine::Entity::Entity() {
 	this->AddComponent(new Transform());
 }
 
-GameEngine::Entity* GameEngine::Entity::getParent() {
+std::weak_ptr<GameEngine::Entity> GameEngine::Entity::getParent() {
 	return this->m_parent;
 }
 
-void GameEngine::Entity::setParent(Entity* _par) {
+void GameEngine::Entity::setParent(std::shared_ptr<Entity> _par) {
 	this->m_parent = _par;
 }
 
-void GameEngine::Entity::AddChild(Entity* _child) {
-	if (_child->getParent() != nullptr) {
-		_child->getParent()->RemoveChild(_child);
-	}
+void GameEngine::Entity::AddChild(std::shared_ptr<Entity> _child) {
+	//std::shared_ptr<Entity> parent(_child->getParent());
+
+	//auto parent = _child->getParent().lock();
+
+	//if (parent) {
+	//	parent->RemoveChild(_child);
+	//}
 
 	this->m_children.push_back(_child);
-	_child->setParent(this);
+	//_child->setParent(std::shared_ptr<Entity>(this));
 }
 
-void GameEngine::Entity::RemoveChild(Entity* _child) {
+void GameEngine::Entity::RemoveChild(std::shared_ptr<Entity> _child) {
 	for (size_t i = 0; i < this->m_children.size(); i++) {
 		auto curr = this->m_children.at(i);
 
@@ -67,6 +71,8 @@ void GameEngine::Entity::Update(float delta) {
 GameEngine::Entity::~Entity() {
 	for (std::pair<std::type_index, void*> comp : m_components) {
 		static_cast<Component*>(comp.second)->Destroy();
+
+		delete comp.second;
 	}
 	m_components.clear();
 }

@@ -2,6 +2,7 @@
 
 #include <engine/Component.h>
 #include <AL/al.h>
+#include <memory>
 
 namespace GameEngine {
 
@@ -24,13 +25,15 @@ namespace GameEngine {
 
 	protected:
 	public:
-		AudioSource(Sound* _snd);
+		AudioSource(std::shared_ptr<Sound> _snd);
+
+		void Init(std::shared_ptr<Sound> _snd);
 
 		/// Play whatever audio buffer is bound this audiosource
 		void Play();
 
 		/// @todo FIXME
-		void Destroy() { delete this; }
+		void Destroy() { }
 
 		~AudioSource();
 

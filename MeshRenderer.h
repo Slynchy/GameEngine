@@ -53,7 +53,7 @@ namespace GameEngine {
 		/// Destroys this component
 		/// @bug FIX THIS, BREAKS IF NOT A POINTER
 		/// @todo FIX THIS, BREAKS IF NOT A POINTER
-		void Destroy() { delete this; }
+		void Destroy() { }
 
 		/// Gets the model-view-projection matrix for this MeshRenderer
 		/// @param[in]	projection	The projection matrix to use

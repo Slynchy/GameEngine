@@ -22,8 +22,7 @@ static inline ALenum to_al_format(short channels, short samples)
 	}
 }
 
-
-GameEngine::AudioSource::AudioSource(Sound* _snd) {
+void GameEngine::AudioSource::Init(std::shared_ptr<Sound> _snd) {
 	alGenBuffers((ALuint)1, &buffer);
 	alGenSources((ALuint)1, &source);
 	alSourcef(source, AL_PITCH, 1);
@@ -44,6 +43,10 @@ GameEngine::AudioSource::AudioSource(Sound* _snd) {
 	);
 
 	alSourcei(source, AL_BUFFER, buffer);
+}
+
+GameEngine::AudioSource::AudioSource(std::shared_ptr<Sound> _snd) {
+	this->Init(_snd);
 }
 
 void GameEngine::AudioSource::Play() {

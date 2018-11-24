@@ -22,6 +22,11 @@ void GameEngine::Camera::lockToTarget(Entity* target) {
 	this->UpdateViewMatrix();
 }
 
+void GameEngine::Camera::lockToTarget(glm::vec3* target) {
+	this->lookAtTarget = target;
+	this->UpdateViewMatrix();
+}
+
 void GameEngine::Camera::clearLockToTarget() {
 	this->lookAtTarget = nullptr;
 }
