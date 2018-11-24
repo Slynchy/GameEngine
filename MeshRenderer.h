@@ -28,7 +28,7 @@ namespace GameEngine {
 		GLuint matID;
 
 		/// Vector of meshes to be rendered by this MeshRenderer
-		std::vector<Mesh> m_meshes;
+		std::vector<Mesh*> m_meshes;
 
 		/// Draws the mesh(es) to the GPU using the proj/view matrices supplied
 		///
@@ -48,7 +48,7 @@ namespace GameEngine {
 
 		/// Adds a mesh to the MeshRenderer
 		/// @param[in]	mesh	The mesh to add
-		void AddMesh(Mesh mesh) { m_meshes.push_back(mesh); }
+		void AddMesh(Mesh* mesh) { m_meshes.push_back(mesh); }
 
 		/// Destroys this component
 		/// @bug FIX THIS, BREAKS IF NOT A POINTER

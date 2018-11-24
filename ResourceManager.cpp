@@ -126,6 +126,21 @@ GameEngine::Texture* GameEngine::ResourceManager::GetTexture(std::string _id) {
 	}
 }
 
+std::string GameEngine::ResourceManager::LoadOBJ(std::string _path) {
+	Model* temp = new Model(_path);
+	this->m_loadedModels.insert(std::pair<std::string, Model*>(_path, temp));
+	return _path;
+}
+
+GameEngine::Model* GameEngine::ResourceManager::GetOBJ(std::string _id) {
+	if (m_loadedModels.find(_id) == m_loadedModels.end()) {
+		return nullptr;
+	}
+	else {
+		return m_loadedModels.at(_id);
+	}
+}
+
 std::string GameEngine::ResourceManager::LoadSound(const char* path) {
 	Sound* snd = new Sound(path);
 	this->m_loadedAudio.insert(std::pair<std::string, Sound*>(path, snd));

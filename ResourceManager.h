@@ -6,12 +6,16 @@
 #include <string>
 #include <engine/Sound.h>
 #include <engine/Texture.h>
+#include <engine/Model.h>
 
 namespace GameEngine {
 
 	class ResourceManager
 	{
 	private:
+		/// Map of strings/IDs to loaded Textures
+		std::map<std::string, Model*> m_loadedModels;
+
 		/// Map of strings/IDs to loaded Textures
 		std::map<std::string, Texture*> m_loadedTextures;
 
@@ -55,6 +59,18 @@ namespace GameEngine {
 		/// @returns The ID it loaded into or an empty string if failed to load
 		/// @bug Only works with BMP?
 		std::string LoadTexture(std::string _path);
+
+		/// Loads a mdl for use in MeshRenderer
+		/// @detail Use GetTexture(_id) to get the mdl later
+		/// @param[in] _path The path to the mdl
+		/// @returns The ID it loaded into or an empty string if failed to load
+		/// @bug Only works with OBJ?
+		std::string LoadOBJ(std::string _path);
+
+		/// Gets the model under the ID if loaded
+		/// @param[in] _id The key the Model is stored under
+		/// @returns The obj ptr, or nullptr if not loaded
+		Model* GetOBJ(std::string _id);
 
 		/// Gets the Texture under the ID if loaded
 		/// @param[in] _id The key the Texture is stored under
