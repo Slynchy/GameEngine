@@ -39,7 +39,11 @@ namespace GameEngine {
 			Camera();
 
 			/// Locks the camera view to look at the target until told to stop
+			/// @deprecated
 			void lockToTarget(Entity* target);
+
+			/// Locks the camera view to look at the target until told to stop
+			void lockToTarget(glm::vec3* _ptr);
 
 			/// Stops the camera looking at a target
 			void clearLockToTarget();

@@ -117,7 +117,7 @@ std::string GameEngine::ResourceManager::LoadTexture(std::string _path) {
 	return _path;
 }
 
-GameEngine::Texture* GameEngine::ResourceManager::GetTexture(std::string _id) {
+std::shared_ptr<GameEngine::Texture> GameEngine::ResourceManager::GetTexture(std::string _id) {
 	if (m_loadedTextures.find(_id) == m_loadedTextures.end()) {
 		return nullptr;
 	}
@@ -147,7 +147,7 @@ std::string GameEngine::ResourceManager::LoadSound(const char* path) {
 	return std::string(path);
 }
 
-GameEngine::Sound* GameEngine::ResourceManager::GetSound(std::string _id) {
+std::shared_ptr<GameEngine::Sound> GameEngine::ResourceManager::GetSound(std::string _id) {
 	if (m_loadedAudio.find(_id) == m_loadedAudio.end()) {
 		return nullptr;
 	}

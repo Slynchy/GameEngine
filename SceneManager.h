@@ -37,12 +37,18 @@ namespace GameEngine {
 			/// Gets the active camera
 			GameEngine::Camera* getCamera();
 
+			unsigned int RemoveFromScene(std::shared_ptr<Entity> _ent);
+
 			/// Add an object to scene
 			/// @param[in] _ent Pointer to entity to add
 			/// @returns size of scene graph
-			/// @bug Makes shared ptr but probably not doing correctly
-			/// @bug No remove from scene? See Scene.h
+			/// @deprecated Use shared ptr version
 			unsigned int AddToScene(Entity* _ent);
+
+			/// Add an object to scene
+			/// @param[in] _ent Pointer to entity to add
+			/// @returns size of scene graph
+			unsigned int AddToScene(std::shared_ptr<Entity> _ent);
 
 			/// Render all objects in scene
 			void Render();

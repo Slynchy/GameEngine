@@ -17,14 +17,14 @@ namespace GameEngine {
 		std::map<std::string, Model*> m_loadedModels;
 
 		/// Map of strings/IDs to loaded Textures
-		std::map<std::string, Texture*> m_loadedTextures;
+		std::map<std::string, std::shared_ptr<Texture>> m_loadedTextures;
 
 		/// Map of strings/IDs to loaded shaders
 		/// @todo: wrap shader uint as object
 		std::map<std::string, GLuint> m_loadedShaders;
 
 		/// Map of strings/IDs to loaded audio buffers
-		std::map<std::string, Sound*> m_loadedAudio;
+		std::map<std::string, std::shared_ptr<Sound>> m_loadedAudio;
 
 	public:
 		ResourceManager() {
@@ -75,7 +75,7 @@ namespace GameEngine {
 		/// Gets the Texture under the ID if loaded
 		/// @param[in] _id The key the Texture is stored under
 		/// @returns The texture ptr, or nullptr if not loaded
-		Texture* GetTexture(std::string _id);
+		std::shared_ptr<Texture> GetTexture(std::string _id);
 
 		/// Loads audio for use in engine
 		/// @detail Use GetSound(_id) to get the sound later
@@ -87,7 +87,7 @@ namespace GameEngine {
 		/// Gets the Texture under the ID if loaded
 		/// @param[in] _id The key the Texture is stored under
 		/// @returns The texture ptr, or nullptr if not loaded
-		Sound* GetSound(std::string _id);
+		std::shared_ptr<Sound> GetSound(std::string _id);
 	};
 
 }
