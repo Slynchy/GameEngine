@@ -12,6 +12,8 @@ GameEngine::Model::Model(std::string filepath) {
 	std::string err;
 	std::string warn;
 
+	filepath = "assets/models/" + filepath;
+
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str())) {
 		printf("Something went wrong when loading OBJ file %s \n", filepath.c_str());
 		if (!err.empty()) {

@@ -9,8 +9,10 @@ using namespace GameEngine;
 Texture::Texture(std::string _path) {
 	// todo: implement properly
 
+	std::string correctPath = std::string("assets/graphics/") + _path;
+
 	int w, h, comp;
-	unsigned char* image = stbi_load(_path.c_str(), &w, &h, &comp, STBI_rgb);
+	unsigned char* image = stbi_load(correctPath.c_str(), &w, &h, &comp, STBI_rgb);
 	if (image == nullptr) {
 		printf("Failed to load %s\n", _path.c_str());
 	}

@@ -5,17 +5,17 @@
 GameEngine::Audio::Audio() {
 	device = alcOpenDevice(NULL);
 	if (!device) {
-		throw std::exception("durrr"); // fixme
+		throw std::exception("Failed to find device"); 
 	}
 
 	enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
 	if (!supportsEnumeration()) {
-		throw std::exception("durrrrrrrr"); // fixme
+		throw std::exception("Failed to enumerate"); 
 	}
 
 	context = alcCreateContext(device, NULL);
 	if (!alcMakeContextCurrent(context)) {
-		throw std::exception("durrrrrrrrrrrrrrrrr"); // fixme
+		throw std::exception("Failed to make context"); 
 	}
 }
 

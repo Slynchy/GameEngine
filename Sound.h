@@ -3,6 +3,7 @@
 #include <engine/Resource.h>
 #include <AL/al.h>
 #include <alut.h>
+#include <string>
 
 namespace GameEngine {
 
@@ -29,7 +30,10 @@ namespace GameEngine {
 		ALboolean loop = AL_FALSE;
 
 		Sound(const char* path) {
-			alutLoadWAVFile((ALbyte*)path, &format, &data, &size, &freq, &loop);
+
+			std::string correctPath = std::string("assets/sfx/") + path;
+
+			alutLoadWAVFile((ALbyte*)correctPath.c_str(), &format, &data, &size, &freq, &loop);
 		}
 
 		~Sound() {

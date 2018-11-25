@@ -10,9 +10,12 @@ bool GameEngine::ResourceManager::LoadShaders(const char* _id, const char * vert
 	GLuint fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint vShaderID = glCreateShader(GL_VERTEX_SHADER);
 
+	std::string correct_v_path = std::string("assets/shaders/") + vertex_file_path;
+	std::string correct_f_path = std::string("assets/shaders/") + fragment_file_path;
+
 	// read vert Shader code 
 	std::string vShaderCode;
-	std::ifstream vShaderIStream(vertex_file_path, std::ios::in);
+	std::ifstream vShaderIStream(correct_v_path, std::ios::in);
 	if (vShaderIStream.is_open()) {
 		std::stringstream sstream;
 		sstream << vShaderIStream.rdbuf();
@@ -20,14 +23,14 @@ bool GameEngine::ResourceManager::LoadShaders(const char* _id, const char * vert
 		vShaderIStream.close();
 	}
 	else {
-		printf("Failed to open %s!!\n", vertex_file_path);
+		printf("Failed to open %s!!\n", correct_v_path.c_str());
 		getchar();
 		return false;
 	}
 
 	// read frag Shader code
 	std::string fShaderCode;
-	std::ifstream fShaderIStream(fragment_file_path, std::ios::in);
+	std::ifstream fShaderIStream(correct_f_path, std::ios::in);
 	if (fShaderIStream.is_open()) {
 		std::stringstream sstr;
 		sstr << fShaderIStream.rdbuf();
