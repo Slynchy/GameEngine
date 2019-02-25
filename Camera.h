@@ -36,7 +36,7 @@ namespace GameEngine {
 			float yaw = 0.0f;
 			float roll = 0.0f;
 
-			Camera();
+			Camera(int resolutionX, int resolutionY);
 
 			/// Locks the camera view to look at the target until told to stop
 			/// @deprecated

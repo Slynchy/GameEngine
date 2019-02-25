@@ -20,20 +20,30 @@ namespace GameEngine
 		/// Enumerator of possible buttons to press
 		enum BUTTONS
 		{
-			UP,
-			DOWN,
-			LEFT,
-			RIGHT,
-			SPACE,
-			ESC,
+			bUP,
+			bDOWN,
+			bLEFT,
+			bRIGHT,
+			bSPACE,
+			bESC,
 			NUM_OF_BUTTONS
+		};
+
+		/// Enumerator for keystates
+		enum KeyStates {
+			UP = -1,
+			DOWN = 0,
+			STILLDOWN = 1
 		};
 	private:
 		/// The current state of the keyboard
 		const Uint8* SDL_KEYBOARDSTATE;
 
 		/// Boolean mapping of keys
-		uint8_t keys[NUM_OF_BUTTONS - 1] = { false };
+		uint8_t keys[NUM_OF_BUTTONS] = { false };
+
+		/// State mapping
+		KeyStates keyStates[NUM_OF_BUTTONS] = { KeyStates::UP };
 
 		/// If true, update keyboard state
 		bool m_queueUpdate;
@@ -64,6 +74,10 @@ namespace GameEngine
 			m_queueUpdate = false;
 			SDL_KEYBOARDSTATE = NULL;
 		}
+
+		/// Returns the current state of a key
+		/// @param[in] _key Enum value for which key to check.
+		KeyStates KeyState(BUTTONS _key);
 
 		/// Check if key is down against enumerator
 		/// @param[in] _key Enum value for which key to check.

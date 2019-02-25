@@ -66,8 +66,10 @@ namespace GameEngine {
 			}
 
 			/// Initializes the engine, setting up the handlers needed and a basic scenegraph
+			/// @param resolutionX The X dimension for the window/renderer. Optional.
+			/// @param resolutionY The Y dimension for the window/renderer. Optional.
 			/// @returns Non-zero error code if error encountered, zero if all-okay. See this->ErrorCodes
-			int Init();
+			int Init(int resolutionX = 512, int resolutionY = 512);
 
 			void Render();
 

@@ -18,17 +18,10 @@ void GameEngine::Engine::Render() {
 
 void GameEngine::Engine::Update(float delta) {
 	m_events->Update();
-	//m_inputManager->Update();
-	//m_graphics->PreRender();
-
 	m_sceneManager->Update(delta);
-	//m_graphics->SetMatrix(&(*testEntity), dynamic_cast<Mesh*>(testEntity->GetComponent("Mesh").get())->GetModel());
-	//testEntity->Update();
-
-	//m_graphics->PostRender();
 }
 
-int GameEngine::Engine::Init() {
+int GameEngine::Engine::Init(int resolutionX, int resolutionY) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
 		return GameEngine::Engine::ErrorCodes::SDL_FAILED_TO_INIT;
@@ -44,7 +37,14 @@ int GameEngine::Engine::Init() {
 
 	m_graphics = new GameEngine::Graphics();
 	int graphicsErrorCode;
-	if ((graphicsErrorCode = m_graphics->Init()) < 0) {
+	if ((graphicsErrorCode = m_graphics->Init(
+		"GameEngine",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		resolutionX,
+		resolutionY,
+		m_resourceManager
+	)) < 0) {
 		return graphicsErrorCode;
 	}
 	else {

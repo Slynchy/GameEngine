@@ -1,7 +1,7 @@
 
 #include "Camera.h"
 
-GameEngine::Camera::Camera()
+GameEngine::Camera::Camera(int resolutionX, int resolutionY)
 {
 	this->transform = this->GetComponent<Transform>();
 
@@ -9,9 +9,9 @@ GameEngine::Camera::Camera()
 	// TODO: make parameterisable 
 	this->projectionMatrix = glm::perspective(
 		45.0f,
-		(float)512 / (float)512,
+		(float)resolutionX / (float)resolutionY,
 		0.1f,
-		500.0f
+		5000.0f
 	);
 
 	this->UpdateViewMatrix();

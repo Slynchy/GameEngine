@@ -2,7 +2,7 @@
 
 GameEngine::SceneManager::SceneManager(Graphics* _graphicsPtr) {
 	m_graphics = _graphicsPtr;
-	active_scene = new GameEngine::Scene();
+	active_scene = new GameEngine::Scene(m_graphics);
 	active_camera = active_scene->getCamera();
 	//this->AddToScene(camera);
 }
@@ -23,6 +23,7 @@ unsigned int GameEngine::SceneManager::AddToScene(std::shared_ptr<Entity> _ent) 
 
 void GameEngine::SceneManager::Render() {
 	this->active_camera->UpdateViewMatrix();
+	this->m_graphics->UpdatePPShaders();
 	auto projection = this->active_camera->projectionMatrix;
 	auto view = this->active_camera->viewMatrix;
 

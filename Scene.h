@@ -6,6 +6,7 @@ namespace GameEngine {
 
 	class Camera;
 	class Entity;
+	class Graphics;
 
 	class Scene
 	{
@@ -19,7 +20,7 @@ namespace GameEngine {
 		GameEngine::Camera* camera;
 
 	public:
-		Scene();
+		Scene(Graphics* _graphics);
 		~Scene();
 
 		/// Intended to be overriden

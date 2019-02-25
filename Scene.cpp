@@ -1,12 +1,13 @@
 
 #include "Scene.h"
 #include <engine/Camera.h>
+#include <engine/Graphics.h>
 #include <engine/Entity.h>
 
 void GameEngine::Scene::Update() {};
 
-GameEngine::Scene::Scene() {
-	camera = new GameEngine::Camera();
+GameEngine::Scene::Scene(GameEngine::Graphics* _graphics) {
+	camera = new GameEngine::Camera(_graphics->getResX(), _graphics->getResY());
 };
 
 GameEngine::Scene::~Scene() {
